@@ -34,6 +34,7 @@ export function AiChat() {
   const [isTyping, setIsTyping] = useState(false);
   const [hasError, setHasError] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const sessionIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -64,12 +65,18 @@ export function AiChat() {
             role: m.role,
             content: m.content,
           })),
+          sessionId: sessionIdRef.current,
         }),
       });
 
       if (!response.ok) throw new Error("API Error");
 
       const data = await response.json();
+
+      // Сохраняем sessionId для аналитики
+      if (data.sessionId) {
+        sessionIdRef.current = data.sessionId;
+      }
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),

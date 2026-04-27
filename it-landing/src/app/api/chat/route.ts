@@ -1,11 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import config from "../../../../site.config.json";
+import {
+  createSession,
+  logMessage,
+  incrementErrorCount,
+  incrementRateLimit,
+  getAnalyticsSnapshot,
+} from "@/lib/analytics";
+import {
+  notifyAdminUserMessage,
+  notifyAdminError,
+  notifyAdminStats,
+  isTelegramEnabled,
+} from "@/lib/telegram";
 
 // Простая in-memory rate limiting
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 10;
 const requestLog = new Map<string, number[]>();
+
+// Периодичность отправки статистики в Telegram (каждые N сообщений)
+const STATS_NOTIFICATION_INTERVAL = 20;
+let messageCounter = 0;
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
@@ -42,8 +59,10 @@ export async function POST(request: NextRequest) {
       request.headers.get("x-forwarded-for") ||
       request.headers.get("x-real-ip") ||
       "unknown";
+    const userAgent = request.headers.get("user-agent") || "unknown";
 
     if (isRateLimited(ip)) {
+      incrementRateLimit();
       return NextResponse.json(
         { error: "Слишком много запросов. Попробуйте позже." },
         { status: 429 }
@@ -51,7 +70,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { messages } = body;
+    const { messages, sessionId } = body;
 
     if (!Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json(
@@ -67,6 +86,21 @@ export async function POST(request: NextRequest) {
         { error: "Сообщение отклонено системой безопасности" },
         { status: 400 }
       );
+    }
+
+    // Создаём или используем существующую сессию аналитики
+    const analyticsSessionId = sessionId || createSession(ip, userAgent).id;
+
+    // Логируем сообщение пользователя
+    logMessage(analyticsSessionId, "user", lastMessage, ip);
+
+    // Отправляем уведомление в Telegram о сообщении пользователя
+    if (isTelegramEnabled()) {
+      await notifyAdminUserMessage(lastMessage, {
+        ip,
+        userAgent,
+        timestamp: new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" }),
+      });
     }
 
     // Проверка наличия API ключа
@@ -101,9 +135,34 @@ export async function POST(request: NextRequest) {
 
     const message = completion.choices[0]?.message?.content || "";
 
-    return NextResponse.json({ message });
+    // Логируем ответ ассистента
+    logMessage(analyticsSessionId, "assistant", message, ip);
+
+    // Периодическая отправка статистики в Telegram
+    messageCounter += 1;
+    if (isTelegramEnabled() && messageCounter % STATS_NOTIFICATION_INTERVAL === 0) {
+      const stats = getAnalyticsSnapshot();
+      await notifyAdminStats({
+        totalConversations: stats.totalConversations,
+        totalMessages: stats.totalMessages,
+        totalUserMessages: stats.totalUserMessages,
+        totalAssistantMessages: stats.totalAssistantMessages,
+        errorsCount: stats.errorsCount,
+        rateLimitHits: stats.rateLimitHits,
+      });
+    }
+
+    return NextResponse.json({ message, sessionId: analyticsSessionId });
   } catch (error) {
     console.error("Chat API error:", error);
+    incrementErrorCount();
+
+    // Уведомляем об ошибке в Telegram
+    if (isTelegramEnabled()) {
+      const errorDetails = error instanceof Error ? error.message : String(error);
+      await notifyAdminError("Chat API Error", errorDetails);
+    }
+
     return NextResponse.json(
       { error: "Ошибка обработки запроса" },
       { status: 500 }
