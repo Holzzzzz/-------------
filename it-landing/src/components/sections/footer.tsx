@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import config from "../../../site.config.json";
 
 export function Footer() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   return (
     <footer className="border-t bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
@@ -12,9 +15,16 @@ export function Footer() {
           <div>
             <Link
               href="/"
-              className="text-xl font-bold tracking-tight text-foreground"
+              onClick={(e) => {
+                if (isHome) {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+              className="text-xl font-bold tracking-tight text-foreground cursor-pointer relative group inline-block"
             >
               {config.company.name}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full" />
             </Link>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-xs">
               {config.company.description}

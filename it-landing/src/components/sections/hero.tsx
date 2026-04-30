@@ -64,12 +64,12 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <Button size="lg" className="w-full sm:w-auto bg-red-500 hover:bg-red-600 glow-red transition-all duration-300" onClick={() => {
+          <Button size="lg" className="w-full sm:w-auto text-white bg-red-500 hover:bg-red-600 glow-red transition-all duration-300 hover:scale-105 active:scale-95" onClick={() => {
             document.getElementById('contacts')?.scrollIntoView({ behavior: 'smooth' });
           }}>
             {config.hero.ctaPrimary}
           </Button>
-          <Button variant="outline" size="lg" className="w-full sm:w-auto border-2 border-red-500/30 hover:border-red-500 hover:bg-red-500/10 text-foreground transition-all duration-300" onClick={() => {
+          <Button variant="outline" size="lg" className="w-full sm:w-auto text-white border-2 border-red-500/30 hover:border-red-500 hover:bg-red-500/10 transition-all duration-300 hover:scale-105 active:scale-95" onClick={() => {
             document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
           }}>
             {config.hero.ctaSecondary}

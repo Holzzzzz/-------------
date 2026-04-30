@@ -23,6 +23,7 @@ type FormData = z.infer<typeof formSchema>;
 
 export function Contacts() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
     register,
@@ -34,12 +35,26 @@ export function Contacts() {
   });
 
   const onSubmit = async (data: FormData) => {
-    // Заглушка для отправки формы
-    console.log("Form data:", data);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsSubmitted(true);
-    reset();
-    setTimeout(() => setIsSubmitted(false), 5000);
+    setSubmitError(null);
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Ошибка отправки заявки");
+      }
+
+      setIsSubmitted(true);
+      reset();
+      setTimeout(() => setIsSubmitted(false), 5000);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Ошибка отправки";
+      setSubmitError(message);
+    }
   };
 
   return (
@@ -124,9 +139,12 @@ export function Contacts() {
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-md bg-primary/10 text-sm font-medium text-primary hover:bg-primary/20 transition-colors capitalize"
+                    className="px-4 py-2 rounded-md bg-primary/10 text-sm font-medium text-primary hover:bg-primary/20 transition-colors capitalize group"
                   >
-                    {key}
+                    <span className="relative inline-block">
+                      {key}
+                      <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full" />
+                    </span>
                   </a>
                 ))}
               </div>
@@ -206,9 +224,15 @@ export function Contacts() {
                 )}
               </div>
 
+              {submitError && (
+                <p className="text-sm text-destructive text-center">
+                  {submitError}
+                </p>
+              )}
+
               <Button
                 type="submit"
-                className="w-full bg-red-500 hover:bg-red-600 glow-red transition-all duration-300"
+                className="w-full text-white bg-red-500 hover:bg-red-600 glow-red transition-all duration-300 hover:scale-105 active:scale-95"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (

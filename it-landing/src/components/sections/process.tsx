@@ -33,15 +33,16 @@ export function Process() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, margin: "-50px" }}
               transition={{ duration: 0.4, delay: index * 0.15 }}
-              className="relative pt-16"
+              className="relative pt-20 group"
             >
               {/* Step number badge */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center shadow-lg shadow-red-500/30 z-10">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-red-500 text-white text-sm font-bold flex items-center justify-center shadow-lg shadow-red-500/30 z-10">
                 {step.number}
               </div>
               <div className="relative">
-                <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-red-500 transition-colors duration-300 text-center">
+                <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-red-500 transition-colors duration-300 text-center relative inline-block">
                   {step.title}
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full" />
                 </h3>
                 <p className="text-muted-foreground leading-relaxed text-center">
                   {step.description}
@@ -50,7 +51,7 @@ export function Process() {
 
               {/* Connector line for desktop */}
               {index < config.process.steps.length - 1 && (
-                <div className="hidden lg:block absolute top-4 left-[calc(50%+20px)] w-[calc(100%-40px)] h-0.5 bg-gradient-to-r from-red-500/40 to-transparent">
+                <div className="hidden lg:block absolute top-6 left-[calc(50%+28px)] w-[calc(100%-56px)] h-0.5 bg-gradient-to-r from-red-500/40 to-transparent">
                   <div className="absolute right-0 -top-1 w-2 h-2 rounded-full bg-red-500" />
                 </div>
               )}

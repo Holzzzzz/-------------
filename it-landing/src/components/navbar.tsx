@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Menu, X } from "lucide-react";
@@ -9,6 +10,9 @@ import config from "../../site.config.json";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -33,9 +37,16 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between">
           <Link
             href="/"
-            className="text-2xl font-bold tracking-tight text-foreground"
+            onClick={(e) => {
+              if (isHome) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+            className="text-2xl font-bold tracking-tight text-foreground cursor-pointer relative group inline-block"
           >
             {config.company.name}
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full" />
           </Link>
 
           {/* Desktop nav */}
@@ -51,9 +62,12 @@ export function Navbar() {
               </a>
             ))}
             <ThemeToggle />
-            <Button onClick={() => {
-              document.getElementById('contacts')?.scrollIntoView({ behavior: 'smooth' });
-            }}>
+            <Button
+              className="text-white bg-red-500 hover:bg-red-600 transition-all duration-300 hover:scale-105 active:scale-95"
+              onClick={() => {
+                document.getElementById('contacts')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
               {config.hero.ctaPrimary}
             </Button>
           </nav>
@@ -91,10 +105,13 @@ export function Navbar() {
                 {item.label}
               </a>
             ))}
-            <Button className="w-full" onClick={() => {
-              setIsMobileMenuOpen(false);
-              document.getElementById('contacts')?.scrollIntoView({ behavior: 'smooth' });
-            }}>
+            <Button
+              className="w-full text-white bg-red-500 hover:bg-red-600 transition-all duration-300 hover:scale-105 active:scale-95"
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                document.getElementById('contacts')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
               {config.hero.ctaPrimary}
             </Button>
           </div>

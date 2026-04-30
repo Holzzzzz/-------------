@@ -173,10 +173,13 @@ function StatCard({
       className="relative group"
     >
       <div className="text-center p-8 rounded-2xl border border-red-500/20 bg-background hover:border-red-500/50 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-300">
-        <div className="text-4xl sm:text-5xl font-bold text-foreground mb-2 tracking-tight">
-          {prefix}
-          {count}
-          <span className="text-red-500">{suffix}</span>
+        <div className="flex items-baseline justify-center min-h-[3.5rem] sm:min-h-[4.5rem] mb-2">
+          <span className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight leading-none tabular-nums">
+            {prefix}{count}
+          </span>
+          <span className="text-4xl sm:text-5xl font-bold text-red-500 tracking-tight leading-none ml-1">
+            {suffix}
+          </span>
         </div>
         <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">
           {label}
@@ -324,8 +327,9 @@ export function Portfolio() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
                 <div className="p-5">
-                  <h3 className="text-lg font-semibold text-foreground group-hover:text-red-500 transition-colors duration-300 mb-2">
+                  <h3 className="text-lg font-semibold text-foreground group-hover:text-red-500 transition-colors duration-300 mb-2 relative inline-block">
                     {project.title}
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full" />
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {project.description}
@@ -346,8 +350,9 @@ export function Portfolio() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
                 <div className="p-5">
-                  <h3 className="text-lg font-semibold text-foreground group-hover:text-red-500 transition-colors duration-300 mb-2">
+                  <h3 className="text-lg font-semibold text-foreground group-hover:text-red-500 transition-colors duration-300 mb-2 relative inline-block">
                     {project.title}
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full" />
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {project.description}

@@ -125,6 +125,36 @@ export async function notifyAdminError(
 }
 
 /**
+ * Отправляет уведомление о новой заявке из контактной формы.
+ */
+export async function notifyAdminContactForm(data: {
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+  ip?: string;
+  userAgent?: string;
+}): Promise<boolean> {
+  const time = new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" });
+  const meta = data.ip ? `\n🌐 IP: ${data.ip}` : "";
+
+  const text = `
+<b>📩 Новая заявка с сайта</b>
+
+🕒 <b>Время:</b> ${time}${meta}
+
+👤 <b>Имя:</b> ${escapeHtml(data.name)}
+📧 <b>Email:</b> ${escapeHtml(data.email)}
+📞 <b>Телефон:</b> ${data.phone ? escapeHtml(data.phone) : "не указан"}
+
+📝 <b>Сообщение:</b>
+<pre>${escapeHtml(data.message.slice(0, 3000))}</pre>
+  `.trim();
+
+  return sendTelegramMessage(text, { parse_mode: "HTML" });
+}
+
+/**
  * Экранирует HTML-символы для Telegram API.
  */
 function escapeHtml(text: string): string {

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import config from "../../../site.config.json";
 
 export const metadata: Metadata = {
@@ -9,6 +11,13 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
+      <Link
+        href="/"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 group"
+      >
+        <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+        На главную
+      </Link>
       <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl mb-8">
         Политика конфиденциальности
       </h1>

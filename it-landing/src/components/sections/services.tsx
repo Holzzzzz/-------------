@@ -60,7 +60,9 @@ export function Services() {
                     <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-red-500/10 to-red-500/5 flex items-center justify-center mb-4 group-hover:from-red-500/20 group-hover:to-red-500/10 transition-all duration-300 border border-red-500/20 group-hover:border-red-500/40">
                       <Icon className="h-6 w-6 text-red-500" />
                     </div>
-                    <CardTitle className="text-xl group-hover:text-red-500 transition-colors duration-300">{service.title}</CardTitle>
+                    <CardTitle className="text-xl group-hover:text-red-500 transition-colors duration-300">
+                      {service.title}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="relative">
                     <p className="text-muted-foreground leading-relaxed">
