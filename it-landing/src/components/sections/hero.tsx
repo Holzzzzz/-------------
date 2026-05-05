@@ -69,7 +69,7 @@ export function Hero() {
           }}>
             {config.hero.ctaPrimary}
           </Button>
-          <Button variant="outline" size="lg" className="w-full sm:w-auto text-white border-2 border-red-500/30 hover:border-red-500 hover:bg-red-500/10 transition-all duration-300 hover:scale-105 active:scale-95" onClick={() => {
+          <Button variant="outline" size="lg" className="w-full sm:w-auto text-foreground border-2 border-red-500/30 hover:border-red-500 hover:bg-red-500/10 transition-all duration-300 hover:scale-105 active:scale-95" onClick={() => {
             document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
           }}>
             {config.hero.ctaSecondary}
