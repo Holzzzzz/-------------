@@ -40,7 +40,7 @@ export function Process() {
                 {step.number}
               </div>
               <div className="relative">
-                <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-red-500 transition-colors duration-300 text-center relative inline-block">
+                <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-red-500 transition-colors duration-300 text-center relative">
                   {step.title}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full" />
                 </h3>
